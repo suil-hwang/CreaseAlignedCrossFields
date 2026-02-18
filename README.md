@@ -1,33 +1,64 @@
-# Crease Aligned Cross Fields
+# Crease Aligned Cross Fields (Python)
+
 - [Paper](https://dl.acm.org/doi/abs/10.1145/3374209)
 - [Talk](https://www.youtube.com/watch?v=a6Cv0tZulv4)
 - [Fast forward](https://www.youtube.com/watch?v=M28EMpBRtnA)
 - [Extra results](https://drive.google.com/file/d/1heg0i8wXiyBT-Zx9XVPOsEuLMNF4WuGM/view?usp=sharing)
 
-## Introduction
-This code includes algorithms for computing crease-aligned cross fields on triangle meshes:
+## Overview
 
-## External Dependencies
-- [Arff](https://github.com/dpa1mer/arff) 
-- [Mosek](https://www.mosek.com) 9.0 ([C++ Fusion API](https://docs.mosek.com/9.0/cxxfusion/index.html#))
-- Intel [TBB](https://github.com/intel/tbb)
-- [gptoolbox](https://github.com/alecjacobson/gptoolbox)
+This repository provides a Python implementation for computing crease-aligned cross fields on triangle meshes.
 
-## Installation
-`example` contains building instructions. In summary, you will need TBB, Mosek 9.0, gptoolbox, and Arff.
+## Dependencies
 
-## Usage
-The main command for computing fields is `SolveLpCrossField`. See `example` for building and run instructions.
+- Python 3.10+
+- [MOSEK](https://www.mosek.com) (Python API)
+- `numpy`, `scipy`
+- `matplotlib` (only for visualization in `example.py`)
 
-### Loading Models
-Some triangle meshes in `obj` format are included in the `Meshes` directory for convenience. See `example` for how to load.
+`arff` is used as a pip package from:
 
-### Computing Cross Fields
-The following command computes a cross field on the triangle mesh whose vertices are X and triangles are T.
-```crossField = SolveLpCrossField(X, T, '', 0, 2, True)```
+- `https://github.com/suil-hwang/arff/tree/master`
 
-### Visualization
-The sixth argument is a flag for toggling visualization. Leave as true to get a figure of the cross field. Tools are available online for computing more detailed visualizations such as streamlines of the cross field or finding singular locations. 
-(https://github.com/avaxman/Directional/blob/master/docs/tutorial.md)
+## Install
 
+```bash
+python -m pip install --upgrade "git+https://github.com/suil-hwang/arff.git@master"
+```
 
+If you run the optimization path, make sure MOSEK license/setup is valid in your environment.
+
+## Run Example
+
+```bash
+python example.py
+```
+
+This runs `SolveLpCrossField` on `Meshes/notch5.obj`, computes the cross field, and writes a `.mat` result under `Results/`.
+
+## Python API
+
+Main solver:
+
+- `SolveLpCrossField` in `SolveLpCrossField.py`
+
+MATLAB-style signature:
+
+```python
+dirs1, fname, data = SolveLpCrossField(
+    X, T, mname, n, p, Visualize, isFixedTriangle=None, fixedTriangleFrames=None
+)
+```
+
+Key inputs:
+
+- `X`: vertex array `(n, 3)`
+- `T`: triangle array `(m, 3)`
+- `n`: normal-alignment softness (`0` gives hard alignment)
+- `p`: objective norm (`1`, `2`, or `np.inf`)
+- `Visualize`: show final field if `True`
+
+## Notes
+
+- `arff/ext/ray` is MATLAB/MEX-side legacy layout.
+- Python runtime uses the pip-installed `arff` package modules (`arff/src/ray` lineage).

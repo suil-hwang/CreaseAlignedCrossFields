@@ -1,2 +1,6 @@
 /MosekSoftCrossFields/MosekSoftCrossFields.mexw64
 /*.asv
+.claude
+.serena
+__pycache__
+.pytest_cache
